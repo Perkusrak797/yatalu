@@ -28,10 +28,12 @@ function typeWriter() {
 
 // ====================== HEART ANIMATION ======================
 const canvas = document.getElementById('heart-canvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d', { alpha: true });
 let points = [];
 let time = 0;
 let animationFrame;
+
+const MAX_POINTS = 130; // ← Ограничение количества надписей (можно менять)
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -45,15 +47,14 @@ function initHeart() {
   const cy = canvas.height / 2;
   const baseScale = Math.min(canvas.width, canvas.height) * 0.9 / 38;
 
-  // Основное сердце (много точек)
-  for (let t = 0; t < Math.PI * 2; t += 0.025) {
+  // Основное сердце
+  for (let t = 0; t < Math.PI * 2; t += 0.050) {
     const x = 16 * Math.pow(Math.sin(t), 3);
     const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-    
+   
     points.push({
       baseX: cx + x * baseScale,
       baseY: cy + y * baseScale * 0.95,
-      scale: 1,
       alpha: 0,
       targetAlpha: 0.85 + Math.random() * 0.15,
       delay: Math.random() * 1200,
@@ -62,16 +63,15 @@ function initHeart() {
     });
   }
 
-  // Внутренние слои для объёма
+  // Внутренние слои
   for (let layer = 0.65; layer < 1; layer += 0.12) {
     for (let t = 0; t < Math.PI * 2; t += 0.045) {
       const x = 16 * Math.pow(Math.sin(t), 3);
       const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-      
+     
       points.push({
         baseX: cx + x * baseScale * layer,
         baseY: cy + y * baseScale * layer * 0.95,
-        scale: layer,
         alpha: 0,
         targetAlpha: 0.35 + Math.random() * 0.35,
         delay: 800 + Math.random() * 1800,
@@ -80,11 +80,16 @@ function initHeart() {
       });
     }
   }
+
+  // === ОГРАНИЧЕНИЕ КОЛИЧЕСТВА ===
+  if (points.length > MAX_POINTS) {
+    points.length = MAX_POINTS;
+  }
 }
 
 function drawHeart() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  time += 0.018;
+  time += 0.017; // чуть плавнее
 
   points.forEach(p => {
     if (time * 1000 > p.delay) {
@@ -92,26 +97,25 @@ function drawHeart() {
     }
 
     const pulse = Math.sin(time * 2.8 + p.offset) * 0.03 + 1;
-    
+   
     ctx.save();
     ctx.globalAlpha = p.alpha * (0.7 + Math.sin(time * 3 + p.offset) * 0.3);
     ctx.fillStyle = '#ff4d6d';
-    ctx.font = `bold ${p.size * pulse}px "Fira Code", monospace`;
+    ctx.font = `600 ${Math.floor(p.size * pulse)}px "Fira Code", monospace`; // 600 быстрее чем bold
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    
-    // Лёгкое плавание
+   
     const floatY = Math.sin(time * 1.8 + p.offset) * 2.5;
-    
+   
     ctx.fillText(heartText, p.baseX, p.baseY + floatY);
-    
-    // Дополнительное свечение (glow)
+   
+    // Glow
     if (p.alpha > 0.6) {
       ctx.shadowColor = '#ff8fb1';
-      ctx.shadowBlur = 18;
+      ctx.shadowBlur = 16;        // немного уменьшил для производительности
       ctx.fillText(heartText, p.baseX, p.baseY + floatY);
     }
-    
+   
     ctx.restore();
   });
 
