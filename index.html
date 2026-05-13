@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Для тебя</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Console Screen -->
+  <div id="console" class="screen active">
+    <div class="console-container">
+      <div class="terminal">
+        <div class="line">
+          <span class="system">[system]</span>
+          <span id="typewriter" class="typewriter"></span>
+        </div>
+        <div class="line">
+          <span class="system">[status]</span>
+          <span id="status" class="status"></span>
+        </div>
+
+        <div id="decrypt-area" class="decrypt-area hidden">
+          <p class="message">One encrypted package found for you.</p>
+          
+          <button id="decrypt-btn" class="decrypt-button">
+            <span>Decrypt Message</span>
+          </button>
+          
+          <p class="hint">(или кликни в любом месте)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reveal Screen -->
+  <div id="reveal" class="screen">
+    <canvas id="heart-canvas"></canvas>
+    
+    <div class="overlay-content">
+      
+    </div>
+
+    <div class="tech-info top-left">
+      <div>ln: 420</div>
+      <div>id: 0xHEART</div>
+      <div>type: organic_emotion</div>
+    </div>
+
+    <div class="tech-info bottom-right">
+      heart_reveal // success
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
